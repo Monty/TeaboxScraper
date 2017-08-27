@@ -5,15 +5,15 @@
 # Use :-u" switch to leave spreadsheet unsorted, i.e. in the order found on the web
 while getopts ":dtu" opt; do
     case $opt in
-        d)
-            DEBUG="yes"
-            ;;
-        u)
-            UNSORTED="yes"
-            ;;
-        \?)
-            echo "Ignoring invalid option: -$OPTARG" >&2
-            ;;
+    d)
+        DEBUG="yes"
+        ;;
+    u)
+        UNSORTED="yes"
+        ;;
+    \?)
+        echo "Ignoring invalid option: -$OPTARG" >&2
+        ;;
     esac
 done
 shift $((OPTIND - 1))
@@ -34,14 +34,14 @@ TEABOX_TARGET="$1"
 PACK_ID=${TEABOX_TARGET##*/}
 
 # Make sure we can execute curl.
-if [ ! -x "$(which curl 2>/dev/null)" ] ; then
+if [ ! -x "$(which curl 2>/dev/null)" ]; then
     echo "[Error] Can't run curl. Install curl and rerun this script."
     echo "        To test, type:  curl -Is https://github.com/ | head -5"
     exit 1
 fi
 
 # Make sure network is up and the Teabox site is reachable
-if ! curl -o /dev/null -Isf $TEABOX_TARGET ; then
+if ! curl -o /dev/null -Isf $TEABOX_TARGET; then
     echo "[Error] $TEABOX_TARGET isn't available, or your network is down."
     echo "        Try accessing $TEABOX_TARGET in your browser"
     exit 1
@@ -85,97 +85,97 @@ rm -f $URL_FILE $PACK_FILE $DESCRIPTION_FILE $PACK_SPREADSHEET_FILE \
     $TEA_FILE $TEA_INFO_FILE $TEA_DESCRIPTION_FILE $TEA_PASTED_FILE $TEA_SPREADSHEET_FILE
 
 # Create a list of tea URLs for later processing, and data for the pack spreadsheet
-curl -s $TEABOX_TARGET \
-    | awk -v URL_FILE=$URL_FILE -v PACK_FILE=$PACK_FILE -v DESCRIPTION_FILE=$DESCRIPTION_FILE \
-    -f getTeaboxFrom-pack.awk
+curl -s $TEABOX_TARGET |
+    awk -v URL_FILE=$URL_FILE -v PACK_FILE=$PACK_FILE -v DESCRIPTION_FILE=$DESCRIPTION_FILE \
+        -f getTeaboxFrom-pack.awk
 
 # keep track of the number of rows in the spreadsheet
 lastRow=1
 # loop through the list of tea URLs from $URL_FILE
 while read -r line; do
     # Create column files with data for the tea spreadsheet
-    curl -s "$line" \
-        | awk -v TEA_FILE=$TEA_FILE -v TEA_DESCRIPTION_FILE=$TEA_DESCRIPTION_FILE \
-        -v TEA_INFO_FILE=$TEA_INFO_FILE -v SERIES_NUMBER=$lastRow -f getTeaboxFrom-tea.awk
+    curl -s "$line" |
+        awk -v TEA_FILE=$TEA_FILE -v TEA_DESCRIPTION_FILE=$TEA_DESCRIPTION_FILE \
+            -v TEA_INFO_FILE=$TEA_INFO_FILE -v SERIES_NUMBER=$lastRow -f getTeaboxFrom-tea.awk
     ((lastRow++))
-done < "$URL_FILE"
+done <"$URL_FILE"
 
 # Output pack header
 echo -e \
-    "#\tTea\tPrice\tDescription" > $PACK_SPREADSHEET_FILE
+    "#\tTea\tPrice\tDescription" >$PACK_SPREADSHEET_FILE
 #
 # Output pack body
-if [ "$UNSORTED" = "yes" ] ; then
+if [ "$UNSORTED" = "yes" ]; then
     # sort key 1 sorts in the order found on the web
     # sort key 4 sorts by title
-    cat $PACK_FILE | nl -n ln \
-        | sort --key=1,1n --key=4 --field-separator=\" >>$PACK_SPREADSHEET_FILE
+    cat $PACK_FILE | nl -n ln |
+        sort --key=1,1n --key=4 --field-separator=\" >>$PACK_SPREADSHEET_FILE
 else
-    cat $PACK_FILE | nl -n ln \
-        | sort --key=4 --field-separator=\" >>$PACK_SPREADSHEET_FILE
+    cat $PACK_FILE | nl -n ln |
+        sort --key=4 --field-separator=\" >>$PACK_SPREADSHEET_FILE
 fi
 
 # Output tea header
-echo -e \
-    "#\tTea\tGrams\tOunces\tCups\tPrice\tPer Cup\tInstructions\tSteeps\tDrink With\tTags"\
-"\tPicking Date\tTime of Day\tCaffeine\tBest Consumed\tSeason\tSpecialty\tSKU\tGrade\tInvoice"\
-"\tDescription\tAppearance\tAroma\tTaste\tComplements\tDry Leaf Appearance\tDry Leaf Aroma"\
-"\tInfusion Appearance\tInfusion Aroma\tTea Estate" > $TEA_SPREADSHEET_FILE
+HEADER="#\tTea\tGrams\tOunces\tCups\tPrice\tPer Cup\tInstructions\tSteeps\tDrink With"
+HEADER+="\tTags\tPicking Date\tTime of Day\tCaffeine\tBest Consumed\tSeason\tSpecialty"
+HEADER+="\tSKU\tGrade\tInvoice\tDescription\tAppearance\tAroma\tTaste\tComplements"
+HEADER+="\tDry Leaf Appearance\tDry Leaf Aroma\tInfusion Appearance\tInfusion Aroma\tTea Estate"
+printf "$HEADER\n" >$TEA_SPREADSHEET_FILE
 #
 # Output tea body
-if [ "$UNSORTED" = "yes" ] ; then
+if [ "$UNSORTED" = "yes" ]; then
     # sort key 1 sorts in the order found on the web
     # sort key 4 sorts by title
-    cat $TEA_FILE | nl -n ln \
-        | sort --key=1,1n --key=4,4 --field-separator=\" >>$TEA_SPREADSHEET_FILE
+    cat $TEA_FILE | nl -n ln |
+        sort --key=1,1n --key=4,4 --field-separator=\" >>$TEA_SPREADSHEET_FILE
 else
-    cat $TEA_FILE | nl -n ln \
-        | sort --key=4,4 --field-separator=\" >>$TEA_SPREADSHEET_FILE
+    cat $TEA_FILE | nl -n ln |
+        sort --key=4,4 --field-separator=\" >>$TEA_SPREADSHEET_FILE
 fi
 
 # If we don't want to create a "diffs" file for debugging, exit here
-if [ "$DEBUG" != "yes" ] ; then
+if [ "$DEBUG" != "yes" ]; then
     exit
 fi
 
 # Shortcut for checking differences between two files.
 # checkdiffs basefile newfile
-function checkdiffs () {
-echo
-if [ ! -e "$2" ] ; then
-    echo "==> $2 does not exist. Skipping diff."
-    return 1
-fi
-if [ ! -e "$1" ] ; then
-    # If the basefile file doesn't yet exist, assume no differences
-    # and copy the newfile to the basefile so it can serve
-    # as a base for diffs in the future.
-    echo "==> $1 does not exist. Creating it, assuming no diffs."
-    cp -p "$2" "$1"
-else
-    echo "==> what changed between $1 and $2:"
-    # first the stats
-    diff -c "$1" "$2" | diffstat -sq \
-        -D $(cd $(dirname "$2") && pwd -P) \
-        | sed -e "s/ 1 file changed,/==>/" -e "s/([+-=\!])//g"
-    # then the diffs
-    diff \
-        --unchanged-group-format='' \
-        --old-group-format='==> deleted %dn line%(n=1?:s) at line %df <==
+function checkdiffs() {
+    echo
+    if [ ! -e "$2" ]; then
+        echo "==> $2 does not exist. Skipping diff."
+        return 1
+    fi
+    if [ ! -e "$1" ]; then
+        # If the basefile file doesn't yet exist, assume no differences
+        # and copy the newfile to the basefile so it can serve
+        # as a base for diffs in the future.
+        echo "==> $1 does not exist. Creating it, assuming no diffs."
+        cp -p "$2" "$1"
+    else
+        echo "==> what changed between $1 and $2:"
+        # first the stats
+        diff -c "$1" "$2" | diffstat -sq \
+            -D $(cd $(dirname "$2") && pwd -P) |
+            sed -e "s/ 1 file changed,/==>/" -e "s/([+-=\!])//g"
+        # then the diffs
+        diff \
+            --unchanged-group-format='' \
+            --old-group-format='==> deleted %dn line%(n=1?:s) at line %df <==
 %<' \
-        --new-group-format='==> added %dN line%(N=1?:s) after line %de <==
+            --new-group-format='==> added %dN line%(N=1?:s) after line %de <==
 %>' \
-        --changed-group-format='==> changed %dn line%(n=1?:s) at line %df <==
+            --changed-group-format='==> changed %dn line%(n=1?:s) at line %df <==
 %<------ to:
 %>' "$1" "$2"
-    if [ $? == 0 ] ; then
-        echo "==> no diffs found"
+        if [ $? == 0 ]; then
+            echo "==> no diffs found"
+        fi
     fi
-fi
 }
 
 # Preserve any possible errors for debugging
-cat >>$POSSIBLE_DIFFS << EOF
+cat >>$POSSIBLE_DIFFS <<EOF
 ==> ${0##*/} completed: $(date)
 
 $(checkdiffs $PUBLISHED_URLS $URL_FILE)
@@ -196,4 +196,3 @@ EOF
 
 echo
 echo "==> ${0##*/} completed: $(date)"
-

@@ -57,11 +57,11 @@ awk -v TEA_FILE=$TEA_FILE -v TEA_DESCRIPTION_FILE=$TEA_DESCRIPTION_FILE \
     -f getTeaboxFrom-tea.awk $TEABOX_TARGET
 
 # Output tea header
-echo -e \
-    "#\tTea\tGrams\tOunces\tCups\tPrice\tPer Cup\tInstructions\tSteeps\tDrink With\tTags"\
-"\tPicking Date\tTime of Day\tCaffeine\tBest Consumed\tSeason\tSpecialty\tSKU\tGrade\tInvoice"\
-"\tDescription\tAppearance\tAroma\tTaste\tComplements\tDry Leaf Appearance\tDry Leaf Aroma"\
-"\tInfusion Appearance\tInfusion Aroma\tTea Estate" > $TEA_SPREADSHEET_FILE
+HEADER="#\tTea\tGrams\tOunces\tCups\tPrice\tPer Cup\tInstructions\tSteeps\tDrink With"
+HEADER+="\tTags\tPicking Date\tTime of Day\tCaffeine\tBest Consumed\tSeason\tSpecialty"
+HEADER+="\tSKU\tGrade\tInvoice\tDescription\tAppearance\tAroma\tTaste\tComplements"
+HEADER+="\tDry Leaf Appearance\tDry Leaf Aroma\tInfusion Appearance\tInfusion Aroma\tTea Estate"
+printf "$HEADER\n" >$TEA_SPREADSHEET_FILE
 #
 # Output tea body
 if [ "$UNSORTED" = "yes" ]; then

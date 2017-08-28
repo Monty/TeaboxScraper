@@ -10,6 +10,9 @@
 #       <meta property="og:title" content="Darjeeling First Flush Tea Collection" />
 #       <meta property="og:price:amount" content="117" />
 #
+#       <div class="child-pdt active-child" data-price="400" data-discount="30" \
+#       datasp-price="280" data-id="52031" data-pid="4468" data-in-stock="True" data-num-stock="90">
+#
 #       <p class="message"><p>Experience the very best ... collection of teas.</p>i\
 #       <br><p><b>Note:</b> This image...vary from the one shown.</p></p>
 # ---
@@ -40,13 +43,22 @@
     next
 }
 
+/ data-discount=".* data-sp-price="/ {
+    split ($0,fld,"\"")
+    data_discount = fld[6]
+    data_sp_price = fld[8]
+    data_num_stock = fld[16]
+}
+
 /<p class="message"><p>/ {
     split ($0,fld,"[<>]")
     pack_description = fld[5]
     gsub (/&#39;/,"’",pack_description)
     print pack_description >> DESCRIPTION_FILE
-    printf ("=HYPERLINK(\"%s\";\"%s\")\t$ %.2f\t%s\n", \
-            pack_URL, pack_title, pack_price, pack_description) >> PACK_FILE
+    printf ("0\t=HYPERLINK(\"%s\";\"%s\")\t$ %.2f\t%s", \
+            pack_URL, pack_title, pack_price, pack_description) >> PACK_SPREADSHEET_FILE
+    printf ("\t%d %%\t$ %.2f\t%d\n", \
+            data_discount,data_sp_price,data_num_stock) >> PACK_SPREADSHEET_FILE
     next
 }
 

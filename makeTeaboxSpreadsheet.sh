@@ -84,10 +84,14 @@ POSSIBLE_DIFFS="Teabox_diffs-$PACK_ID-$LONGDATE.txt"
 rm -f $URL_FILE $PACK_FILE $DESCRIPTION_FILE $PACK_SPREADSHEET_FILE \
     $TEA_FILE $TEA_INFO_FILE $TEA_DESCRIPTION_FILE $TEA_PASTED_FILE $TEA_SPREADSHEET_FILE
 
+# Output pack header
+echo -e \
+    "#\tTea\tPrice\tDescription\tDiscount\tSale Price\tIn Stock" >$PACK_SPREADSHEET_FILE
+
 # Create a list of tea URLs for later processing, and data for the pack spreadsheet
 curl -s $TEABOX_TARGET |
     awk -v URL_FILE=$URL_FILE -v PACK_FILE=$PACK_FILE -v DESCRIPTION_FILE=$DESCRIPTION_FILE \
-        -f getTeaboxFrom-pack.awk
+        -v PACK_SPREADSHEET_FILE=$PACK_SPREADSHEET_FILE -f getTeaboxFrom-pack.awk
 
 # keep track of the number of rows in the spreadsheet
 lastRow=1
@@ -100,10 +104,6 @@ while read -r line; do
     ((lastRow++))
 done <"$URL_FILE"
 
-# Output pack header
-echo -e \
-    "#\tTea\tPrice\tDescription" >$PACK_SPREADSHEET_FILE
-#
 # Output pack body
 if [ "$UNSORTED" = "yes" ]; then
     # sort key 1 sorts in the order found on the web

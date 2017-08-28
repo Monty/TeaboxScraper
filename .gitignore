@@ -5,6 +5,9 @@
 *.csv
 *.txt
 
+# Javascript formatting sceripts containing my URL's
+*[1-9].js
+
 # In case you save a spreadsheet
 *.xls
 *.ods

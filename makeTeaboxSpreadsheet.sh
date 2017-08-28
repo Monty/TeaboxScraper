@@ -85,8 +85,7 @@ rm -f $URL_FILE $PACK_FILE $DESCRIPTION_FILE $PACK_SPREADSHEET_FILE \
     $TEA_FILE $TEA_INFO_FILE $TEA_DESCRIPTION_FILE $TEA_PASTED_FILE $TEA_SPREADSHEET_FILE
 
 # Output pack header
-echo -e \
-    "#\tTea\tPrice\tDescription\tDiscount\tSale Price\tIn Stock" >$PACK_SPREADSHEET_FILE
+printf "#\tTea\tPrice\tDescription\tDiscount\tSale Price\tIn Stock\n" >$PACK_SPREADSHEET_FILE
 
 # Create a list of tea URLs for later processing, and data for the pack spreadsheet
 curl -s $TEABOX_TARGET |

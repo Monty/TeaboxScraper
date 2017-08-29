@@ -384,4 +384,7 @@ END {
     #
     printf ("\n") >> TEA_FILE
     print "==========" >> TEA_INFO_FILE
+
+    printf ("%s | $%.2f | %s | %s | %s | %s | %s\n", tea_title, tea_per_cup, tea_aroma["liquor"],
+        tea_taste["liquor"], tea_description, tea_appearance["liquor"], caffeine) >> NOTE_FILE
 }

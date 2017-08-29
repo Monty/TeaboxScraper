@@ -78,11 +78,17 @@ PUBLISHED_TEA_PASTED="$BASELINE/teaPasted-$PACK_ID.txt"
 TEA_SPREADSHEET_FILE="Teabox_Teas-$PACK_ID-$DATE.csv"
 TEA_PUBLISHED_SPREADSHEET="$BASELINE/spreadsheet_teas-$PACK_ID.txt"
 #
+PACK_NOTE_FILE="Pack_Note-$PACK_ID-$DATE.txt"
+TEA_NOTE_FILE="Tea_Note-$PACK_ID-$DATE.txt"
+NOTE_FILE="$COLUMNS/notes-$PACK_ID-$DATE.txt"
+PUBLISHED_NOTES="$BASELINE/notes-$PACK_ID.txt"
+#
 # Name diffs with both date and time so every run produces a new result
 POSSIBLE_DIFFS="Teabox_diffs-$PACK_ID-$LONGDATE.txt"
 
 rm -f $URL_FILE $PACK_FILE $DESCRIPTION_FILE $PACK_SPREADSHEET_FILE \
-    $TEA_FILE $TEA_INFO_FILE $TEA_DESCRIPTION_FILE $TEA_PASTED_FILE $TEA_SPREADSHEET_FILE
+    $TEA_FILE $TEA_INFO_FILE $TEA_DESCRIPTION_FILE $TEA_PASTED_FILE $TEA_SPREADSHEET_FILE \
+    $PACK_NOTE_FILE $TEA_NOTE_FILE $NOTE_FILE
 
 # Output pack header
 printf "#\tTea\tPrice\tDescription\tDiscount\tSale Price\tIn Stock\n" >$PACK_SPREADSHEET_FILE
@@ -90,7 +96,8 @@ printf "#\tTea\tPrice\tDescription\tDiscount\tSale Price\tIn Stock\n" >$PACK_SPR
 # Create a list of tea URLs for later processing, and data for the pack spreadsheet
 curl -s $TEABOX_TARGET |
     awk -v URL_FILE=$URL_FILE -v PACK_FILE=$PACK_FILE -v DESCRIPTION_FILE=$DESCRIPTION_FILE \
-        -v PACK_SPREADSHEET_FILE=$PACK_SPREADSHEET_FILE -f getTeaboxFrom-pack.awk
+        -v PACK_SPREADSHEET_FILE=$PACK_SPREADSHEET_FILE -v TEA_NOTE_FILE=$TEA_NOTE_FILE \
+        -f getTeaboxFrom-pack.awk
 
 # keep track of the number of rows in the spreadsheet
 lastRow=1
@@ -99,7 +106,8 @@ while read -r line; do
     # Create column files with data for the tea spreadsheet
     curl -s "$line" |
         awk -v TEA_FILE=$TEA_FILE -v TEA_DESCRIPTION_FILE=$TEA_DESCRIPTION_FILE \
-            -v TEA_INFO_FILE=$TEA_INFO_FILE -v SERIES_NUMBER=$lastRow -f getTeaboxFrom-tea.awk
+            -v TEA_INFO_FILE=$TEA_INFO_FILE -v SERIES_NUMBER=$lastRow \
+            -v NOTE_FILE=$NOTE_FILE -f getTeaboxFrom-tea.awk
     ((lastRow++))
 done <"$URL_FILE"
 
@@ -109,10 +117,15 @@ if [ "$UNSORTED" = "yes" ]; then
     # sort key 4 sorts by title
     cat $PACK_FILE | nl -n ln |
         sort --key=1,1n --key=4 --field-separator=\" >>$PACK_SPREADSHEET_FILE
+    cat $NOTE_FILE >>$TEA_NOTE_FILE
 else
     cat $PACK_FILE | nl -n ln |
         sort --key=4 --field-separator=\" >>$PACK_SPREADSHEET_FILE
+    sort $NOTE_FILE >>$TEA_NOTE_FILE
 fi
+
+# Output pack note
+cut -f1,2 -d'|' $TEA_NOTE_FILE | sed -e 's/ $//' >$PACK_NOTE_FILE
 
 # Output tea header
 HEADER="#\tTea\tGrams\tOunces\tCups\tPrice\tPer Cup\tInstructions\tSteeps\tDrink With"
@@ -183,6 +196,7 @@ $(checkdiffs $PUBLISHED_DESCRIPTIONS $DESCRIPTION_FILE)
 $(checkdiffs $PUBLISHED_TEAS $TEA_FILE)
 $(checkdiffs $PUBLISHED_TEA_INFO $TEA_INFO_FILE)
 $(checkdiffs $PUBLISHED_TEA_DESCRIPTION $TEA_DESCRIPTION_FILE)
+$(checkdiffs $PUBLISHED_NOTES $NOTE_FILE)
 
 
 ### Any funny stuff with file lengths? Any differences in

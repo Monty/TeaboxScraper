@@ -5,8 +5,10 @@
 *.csv
 *.txt
 
-# Javascript formatting sceripts containing my URL's
+# Hide temporary versions of scripts from git
+*[1-9].awk
 *[1-9].js
+*[1-9].sh
 
 # In case you save a spreadsheet
 *.xls

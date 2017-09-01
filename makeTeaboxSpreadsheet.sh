@@ -115,11 +115,11 @@ done <"$URL_FILE"
 if [ "$UNSORTED" = "yes" ]; then
     # sort key 1 sorts in the order found on the web
     # sort key 4 sorts by title
-    cat $PACK_FILE | nl -n ln |
+    cat -n $PACK_FILE |
         sort --key=1,1n --key=4 --field-separator=\" >>$PACK_SPREADSHEET_FILE
     cat $NOTE_FILE >>$TEA_NOTE_FILE
 else
-    cat $PACK_FILE | nl -n ln |
+    cat -n $PACK_FILE |
         sort --key=4 --field-separator=\" >>$PACK_SPREADSHEET_FILE
     sort $NOTE_FILE >>$TEA_NOTE_FILE
 fi
@@ -138,10 +138,10 @@ printf "$HEADER\n" >$TEA_SPREADSHEET_FILE
 if [ "$UNSORTED" = "yes" ]; then
     # sort key 1 sorts in the order found on the web
     # sort key 4 sorts by title
-    cat $TEA_FILE | nl -n ln |
+    cat -n $TEA_FILE |
         sort --key=1,1n --key=4,4 --field-separator=\" >>$TEA_SPREADSHEET_FILE
 else
-    cat $TEA_FILE | nl -n ln |
+    cat -n $TEA_FILE |
         sort --key=4,4 --field-separator=\" >>$TEA_SPREADSHEET_FILE
 fi
 

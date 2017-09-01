@@ -46,6 +46,9 @@ PUBLISHED_TEA_PASTED="$BASELINE/teaPasted-$PACK_ID.txt"
 TEA_SPREADSHEET_FILE="Teabox_Teas-$PACK_ID-$DATE.csv"
 TEA_PUBLISHED_SPREADSHEET="$BASELINE/spreadsheet_teas-$PACK_ID.txt"
 #
+NOTE_FILE="$COLUMNS/notes-$PACK_ID-$DATE.txt"
+PUBLISHED_NOTES="$BASELINE/notes-$PACK_ID.txt"
+#
 # Name diffs with both date and time so every run produces a new result
 POSSIBLE_DIFFS="Teabox_diffs-$PACK_ID-$LONGDATE.txt"
 
@@ -54,7 +57,7 @@ rm -f $TEA_FILE $TEA_INFO_FILE $TEA_DESCRIPTION_FILE $TEA_PASTED_FILE $TEA_SPREA
 # Create a list of tea URLs for later processing, and data for the pack spreadsheet
 awk -v TEA_FILE=$TEA_FILE -v TEA_DESCRIPTION_FILE=$TEA_DESCRIPTION_FILE \
     -v TEA_INFO_FILE=$TEA_INFO_FILE -v SERIES_NUMBER=$lastRow \
-    -f getTeaboxFrom-tea.awk $TEABOX_TARGET
+    -v NOTE_FILE=$NOTE_FILE -f getTeaboxFrom-tea.awk $TEABOX_TARGET
 
 # Output tea header
 HEADER="#\tTea\tGrams\tOunces\tCups\tPrice\tPer Cup\tInstructions\tSteeps\tDrink With"
@@ -67,10 +70,10 @@ printf "$HEADER\n" >$TEA_SPREADSHEET_FILE
 if [ "$UNSORTED" = "yes" ]; then
     # sort key 1 sorts in the order found on the web
     # sort key 4 sorts by title
-    cat $TEA_FILE | nl -n ln |
+    cat -n $TEA_FILE |
         sort --key=1,1n --key=4,4 --field-separator=\" >>$TEA_SPREADSHEET_FILE
 else
-    cat $TEA_FILE | nl -n ln |
+    cat -n $TEA_FILE |
         sort --key=4,4 --field-separator=\" >>$TEA_SPREADSHEET_FILE
 fi
 
@@ -120,6 +123,7 @@ cat >>$POSSIBLE_DIFFS <<EOF
 ==> ${0##*/} completed: $(date)
 
 $(checkdiffs $PUBLISHED_TEAS $TEA_FILE)
+$(checkdiffs $PUBLISHED_NOTES $NOTE_FILE)
 $(checkdiffs $PUBLISHED_TEA_INFO $TEA_INFO_FILE)
 $(checkdiffs $PUBLISHED_TEA_DESCRIPTION $TEA_DESCRIPTION_FILE)
 

@@ -15,6 +15,7 @@
 // eslint-disable-next-line no-unused-vars
 function format_Teabox_Teas() {
   var ss = SpreadsheetApp.openByUrl(
+    // Dummy URL -- change to your URL on Google Sheets
     'https://docs.google.com/spreadsheets/d/abc1234567/edit'
   );
   // If you move columns around this physical mapping is all you need to change

@@ -345,46 +345,43 @@
 }
 
 END {
+    # Primary
     printf ("=HYPERLINK(\"%s\";\"%s\")", tea_URL, tea_title) >> TEA_FILE
-    # printf ("\t%.2f gm", tea_grams)
     printf ("\t%d", tea_grams) >> TEA_FILE
-    printf ("\t%.2f", tea_oz) >> TEA_FILE
-    printf ("\t%d", tea_cups) >> TEA_FILE
     printf ("\t$ %.2f", tea_price) >> TEA_FILE
     printf ("\t$ %.2f", tea_per_cup) >> TEA_FILE
     printf ("\t%s", tea_notes) >> TEA_FILE
-    printf ("\t%s", tea_steeps) >> TEA_FILE
-    printf ("\t%s", drink_with) >> TEA_FILE
-    printf ("\t%s", tea_tags) >> TEA_FILE
-    printf ("\t%s", pickingDate) >> TEA_FILE
-    printf ("\t%s", timeOfDay) >> TEA_FILE
     printf ("\t%s", caffeine) >> TEA_FILE
-    printf ("\t%s", bestConsumed) >> TEA_FILE
-    printf ("\t%s", season) >> TEA_FILE
-    printf ("\t%s", specialty) >> TEA_FILE
-    printf ("\t%s", SKU) >> TEA_FILE
-    printf ("\t%s", grade) >> TEA_FILE
-    printf ("\t%s", invoice) >> TEA_FILE
-    #
-    printf ("\t%s", tea_description) >> TEA_FILE
-    #
     printf ("\t%s", tea_appearance["liquor"]) >> TEA_FILE
     printf ("\t%s", tea_aroma["liquor"]) >> TEA_FILE
     printf ("\t%s", tea_taste["liquor"]) >> TEA_FILE
-    #
+    printf ("\t%s", tea_description) >> TEA_FILE
     printf ("\t%s", tea_complements) >> TEA_FILE
-    #
+    printf ("\t%s", tea_estate) >> TEA_FILE
+    # Secondary
     printf ("\t%s", tea_appearance["dry-leaf"]) >> TEA_FILE
     printf ("\t%s", tea_aroma["dry-leaf"]) >> TEA_FILE
-    #
     printf ("\t%s", tea_appearance["infusion"]) >> TEA_FILE
     printf ("\t%s", tea_aroma["infusion"]) >> TEA_FILE
-    #
-    printf ("\t%s", tea_estate) >> TEA_FILE
+    printf ("\t%s", season) >> TEA_FILE
+    printf ("\t%s", tea_tags) >> TEA_FILE
+    printf ("\t%s", specialty) >> TEA_FILE
+    printf ("\t%s", grade) >> TEA_FILE
+    printf ("\t%s", drink_with) >> TEA_FILE
+    printf ("\t%s", timeOfDay) >> TEA_FILE
+    # Tertiary
+    printf ("\t%.2f", tea_oz) >> TEA_FILE
+    printf ("\t%d", tea_cups) >> TEA_FILE
+    printf ("\t%s", tea_steeps) >> TEA_FILE
+    printf ("\t%s", bestConsumed) >> TEA_FILE
+    printf ("\t%s", pickingDate) >> TEA_FILE
+    printf ("\t%s", SKU) >> TEA_FILE
+    printf ("\t%s", invoice) >> TEA_FILE
     #
     printf ("\n") >> TEA_FILE
     print "==========" >> TEA_INFO_FILE
 
-    printf ("%s | $%.2f | %s | %s | %s | %s | %s\n", tea_title, tea_per_cup, tea_aroma["liquor"],
-        tea_taste["liquor"], tea_description, tea_appearance["liquor"], caffeine) >> NOTE_FILE
+    printf ("%s | $%.2f | %s | %s | %s | %s | %s\n", tea_title, tea_per_cup, caffeine,
+        tea_appearance["liquor"], tea_aroma["liquor"], tea_taste["liquor"],
+        tea_description) >> NOTE_FILE
 }

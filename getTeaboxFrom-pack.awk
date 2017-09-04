@@ -59,7 +59,7 @@
             pack_URL, pack_title, pack_price, pack_description) >> PACK_SPREADSHEET_FILE
     printf ("\t%d %%\t$ %.2f\t%d\n", \
             data_discount,data_sp_price,data_num_stock) >> PACK_SPREADSHEET_FILE
-    printf ("%s | $%.2f\n\nTea | Per Cup | Aroma | Taste | Description | Appearance | Caffeine\n\n",
+    printf ("%s | $%.2f\n\nTea | Per Cup | Caffeine | Appearance | Aroma | Taste | Description\n\n",
             pack_title, data_sp_price) >> TEA_NOTE_FILE
     next
 }

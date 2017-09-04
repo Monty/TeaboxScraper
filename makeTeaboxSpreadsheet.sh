@@ -127,13 +127,19 @@ fi
 # Output pack note
 cut -f1,2 -d'|' $TEA_NOTE_FILE | sed -e 's/ $//' >$PACK_NOTE_FILE
 
+# Build tea header
+# Primary
+HEADER="#\tTea\tGrams\tPrice\tPer Cup\tInstructions\tCaffeine\tAppearance\tAroma\tTaste"
+HEADER+="\tDescription\tComplements\tTea Estate"
+# Secondary
+HEADER+="\tDry Leaf Appearance\tDry Leaf Aroma\tInfusion Appearance\tInfusion Aroma\tSeason"
+HEADER+="\tTags\tSpecialty\tGrade\tDrink With\tTime of Day"
+# Tertiary
+HEADER+="\tOunces\tCups\tSteeps\tBest Consumed\tPicking Date\tSKU\tInvoice"
+
 # Output tea header
-HEADER="#\tTea\tGrams\tOunces\tCups\tPrice\tPer Cup\tInstructions\tSteeps\tDrink With"
-HEADER+="\tTags\tPicking Date\tTime of Day\tCaffeine\tBest Consumed\tSeason\tSpecialty"
-HEADER+="\tSKU\tGrade\tInvoice\tDescription\tAppearance\tAroma\tTaste\tComplements"
-HEADER+="\tDry Leaf Appearance\tDry Leaf Aroma\tInfusion Appearance\tInfusion Aroma\tTea Estate"
 printf "$HEADER\n" >$TEA_SPREADSHEET_FILE
-#
+
 # Output tea body
 if [ "$UNSORTED" = "yes" ]; then
     # sort key 1 sorts in the order found on the web

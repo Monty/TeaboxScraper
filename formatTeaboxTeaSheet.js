@@ -18,40 +18,44 @@ function format_Teabox_Teas() {
     // Dummy URL -- change to your URL on Google Sheets
     'https://docs.google.com/spreadsheets/d/abc1234567/edit'
   );
-  // If you move columns around this physical mapping is all you need to change
   var sheet = ss.getSheets()[0];
   var lastRowNum = sheet.getLastRow();
   var lastColumnNum = sheet.getLastColumn();
+
+  // If you move columns around this physical mapping is all you need to change
+  // Primary
   var firstColumnNum = 1;
   var teaColumnNum = 2;
   var gramsColumnNum = 3;
-  var ouncesColumnNum = 4;
-  var cupsColumnNum = 5;
-  var priceColumnNum = 6;
-  var perCupColumnNum = 7;
-  var instructionsColumnNum = 8;
-  var steepsColumnNum = 9;
-  var drinkWithColumnNum = 10;
-  var tagsColumnNum = 11;
-  var pickingDateColumnNum = 12;
-  var timeofDayColumnNum = 13;
-  var caffeineColumnNum = 14;
-  var bestConsumedColumnNum = 15;
-  var seasonColumnNum = 16;
-  var specialtyColumnNum = 17;
-  var SKUColumnNum = 18;
-  var gradeColumnNum = 19;
-  var invoiceColumnNum = 20;
-  var descriptionColumnNum = 21;
-  var appearanceColumnNum = 22;
-  var aromaColumnNum = 23;
-  var tasteColumnNum = 24;
-  var complementsColumnNum = 25;
-  var dryLeafAppearanceColumnNum = 26;
-  var dryLeafAromaColumnNum = 27;
-  var infusionAppearanceColumnNum = 28;
-  var infusionAromaColumnNum = 29;
-  var teaEstateColumnNum = 30;
+  var priceColumnNum = 4;
+  var perCupColumnNum = 5;
+  var instructionsColumnNum = 6;
+  var caffeineColumnNum = 7;
+  var appearanceColumnNum = 8;
+  var aromaColumnNum = 9;
+  var tasteColumnNum = 10;
+  var descriptionColumnNum = 11;
+  var complementsColumnNum = 12;
+  var teaEstateColumnNum = 13;
+  // Secondary
+  var dryLeafAppearanceColumnNum = 14;
+  var dryLeafAromaColumnNum = 15;
+  var infusionAppearanceColumnNum = 16;
+  var infusionAromaColumnNum = 17;
+  var seasonColumnNum = 18;
+  var tagsColumnNum = 19;
+  var specialtyColumnNum = 20;
+  var gradeColumnNum = 21;
+  var drinkWithColumnNum = 22;
+  var timeofDayColumnNum = 23;
+  // Tertiary
+  var ouncesColumnNum = 24;
+  var cupsColumnNum = 25;
+  var steepsColumnNum = 26;
+  var bestConsumedColumnNum = 27;
+  var pickingDateColumnNum = 28;
+  var SKUColumnNum = 29;
+  var invoiceColumnNum = 30;
 
   var dataColumnLength = lastRowNum - 1;
   var column;

@@ -1,5 +1,5 @@
 #! /bin/bash
-# Create a .csv spreadsheet of teas available on Teabox
+# Create a .csv spreadsheet of teas available on Teabox sample packs
 
 # Use "-d" switch to output a "diffs" file useful for debugging
 # Use :-u" switch to leave spreadsheet unsorted, i.e. in the order found on the web
@@ -54,9 +54,7 @@ COLUMNS="Teabox-columns"
 BASELINE="Teabox-baseline"
 mkdir -p $COLUMNS $BASELINE
 
-# File names are used in saveTodaysTeaboxFiles.sh
-# so if you change them here, change them there as well
-# they are named with today's date so running them twice
+# Files are named with today's date so running them twice
 # in one day will only generate one set of results
 URL_FILE="$COLUMNS/urls-$PACK_ID-$DATE.csv"
 PUBLISHED_URLS="$BASELINE/urls-$PACK_ID.txt"
@@ -111,7 +109,7 @@ while read -r line; do
     ((lastRow++))
 done <"$URL_FILE"
 
-# Output pack body
+# Output pack body and tea note file
 if [ "$UNSORTED" = "yes" ]; then
     # sort key 1 sorts in the order found on the web
     # sort key 4 sorts by title
@@ -205,9 +203,7 @@ $(checkdiffs $PUBLISHED_TEA_DESCRIPTION $TEA_DESCRIPTION_FILE)
 $(checkdiffs $PUBLISHED_NOTES $NOTE_FILE)
 
 
-### Any funny stuff with file lengths? Any differences in
-### number of lines indicates the website was updated in the
-### middle of processing. You should rerun the script!
+### Any funny stuff with file lengths? 
 
 $(wc $COLUMNS/*-$PACK_ID-$DATE.csv)
 

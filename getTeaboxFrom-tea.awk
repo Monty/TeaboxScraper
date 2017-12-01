@@ -6,19 +6,19 @@
 # Dry Leaf: Aroma, Appearance
 # Infusion: Aroma, Appearance
 # Steeping Notes: Hot, 6 fl oz, 185-194 oF, 3.0 tsp / 2.5 g, 4 mins
-# Recommended number of steeps - one
+# Recommended number of steeps - 1
 # Drink Plain
-# Picking Date Mar 04, 2017
+# Picking Date 08-06-2017
 # Time of Day: Afternoon
 # Caffeine: Medium
 # Best Consumed: Hot
 # Season: First
 # Specialty: Clonal | Chinary
-# SKU FFJPCLB | Grade SFTGFOP1 | Invoice EXN-08
+# SKU FFJPCLB | Grade SFTGFOP1
 # Estate description
 
-# 184   <meta property="og:url"   content="\
-#           https://www.teabox.com/tea/mission-hill-spring-darjeeling-black-tea" />
+# <meta property="og:url"   content="\
+#     https://www.teabox.com/tea/mission-hill-spring-darjeeling-black-tea" />
 /<meta property="og:url" content="/{
     split ($0,fld,"\"")
     tea_URL = fld[4]
@@ -26,7 +26,7 @@
     next
 }
 
-# 185   <meta property="og:title" content="Mission Hill Classic Spring Black Tea" />
+# <meta property="og:title" content="Mission Hill Classic Spring Black Tea" />
 /<meta property="og:title" content="/ {
     split ($0,fld,"\"")
     tea_title = fld[4]
@@ -35,15 +35,7 @@
     next
 }
 
-# 192 <p id="ext-child-weight">3.5 oz</p>
-    /<p id="ext-child-weight">3.5 oz/ {
-    split ($0,fld,"[<>]")
-    tea_grams = fld[4]
-    print "tea_grams = " tea_grams >> TEA_INFO_FILE
-    next
-}
-
-# 194 <meta property="og:price:amount" content="12.99" />
+# <meta property="og:price:amount" content="12.99" />
 /<meta property="og:price:amount" content="/ {
     split ($0,fld,"\"")
     tea_price = fld[4]
@@ -51,10 +43,10 @@
     next
 }
 
-# 352   <ul class="horz-list pdt-tag-list">
-# 355       <li><p>Darjeeling</p></li>
-# 358       <li><p>Single Estate</p></li>
-# 360   </ul>
+# <ul class="horz-list pdt-tag-list">
+#     <li><p>Darjeeling</p></li>
+#     <li><p>Single Estate</p></li>
+# </ul>
 /<ul class="horz-list pdt-tag-list">/,/<\/ul>/ {
     if ($0 ~ /<li>/)  {
         split ($0,fld,"[<>]")
@@ -73,30 +65,24 @@
     }
 }
 
-# 617   <span class="weight-span hidden">3.5 oz </span>
-/<span class="weight-span hidden"/ {
-    split ($0,fld,"[<>]")
-    tea_oz = fld[3]
-    sub (/ oz /,"",tea_oz) 
-    print "tea_oz = " tea_oz >> TEA_INFO_FILE
-}
-
 # <li class="sec-child-pdt " id="sec-child-pdt526132838418" data-price="67.49" \
-# data-sp-price="8999" data-percentage="25" ... data-variant-weight="99">
+#     data-sp-price="8999" data-percentage="25" ... data-variant-weight="99">
 /<li class="sec-child-pdt .* data-variant-weight="99">/ {
     split ($0,fld,"\"")
     tea_currentPrice = fld[6]
     print "tea_currentPrice = " tea_currentPrice >> TEA_INFO_FILE
-    tea_cups = fld[12]
+    tea_cups = 40
     print "tea_cups = " tea_cups >> TEA_INFO_FILE
-    tea_per_cup = tea_currentPrice / 40
+    tea_per_cup = tea_currentPrice / tea_cups
     print "tea_per_cup = " tea_per_cup >> TEA_INFO_FILE
-    tea_grams = fld[4]
+    tea_grams = 99
     print "tea_grams = " tea_grams >> TEA_INFO_FILE
+    tea_oz = 3.5
+    print "tea_oz = " tea_oz >> TEA_INFO_FILE
 }
 
-# 767   <h2 class="header-8">description</h2>
-# 768   <p class="message">This is not your typical ... other teas of this season.</p>
+# <h2 class="header-8">description</h2>
+# <p class="message">This is not your typical ... other teas of this season.</p>
 # Description
 /<meta property="og:description" content="/ {
     split ($0,fld,"\"")
@@ -111,33 +97,22 @@
     next
 }
 
-# 789:  <h3 class="header-4">liquor</h3>
-# 792:      <h5 class="header-10">aroma</h5>
-# 798:      <h5 class="header-10">appearance</h5>
-# 804:      <h5 class="header-10">taste</h5>
-# 810:      <h5 class="header-10">COMPLEMENTS</h5>
-# 823:  <h3 class="header-4">dry leaf</h3>
-# 826:      <h5 class="header-10">aroma</h5>
-# 832:      <h5 class="header-10">appearance</h5>
-# 845:  <h3 class="header-4">infusion</h3>
-# 848:      <h5 class="header-10">aroma</h5>
-# 854:      <h5 class="header-10">appearance</h5>
+#  <h3 class="header-4">liquor</h3>
+#      <h5 class="header-10">aroma</h5>
+#      <h5 class="header-10">appearance</h5>
+#      <h5 class="header-10">taste</h5>
+#      <h5 class="header-10">COMPLEMENTS</h5>
+#  <h3 class="header-4">dry leaf</h3>
+#      <h5 class="header-10">aroma</h5>
+#      <h5 class="header-10">appearance</h5>
+#  <h3 class="header-4">infusion</h3>
+#      <h5 class="header-10">aroma</h5>
+#      <h5 class="header-10">appearance</h5>
 
-/<h3 class="header-4">liquor<\/h3>/ {
-    level = "liquor"
-    print "level = " liquor >> TEA_INFO_FILE
-    next
-}
-
-/<h3 class="header-4">dry leaf<\/h3>/ {
-    level = "dry-leaf"
-    print "level = " dry-leaf >> TEA_INFO_FILE
-    next
-}
-
-/<h3 class="header-4">infusion<\/h3>/ {
-    level = "infusion"
-    print "level = " infusion >> TEA_INFO_FILE
+/<h3 class="header-4">/ {
+    split ($0,fld,"[<>]")
+    level = fld[3]
+    print "level = " level >> TEA_INFO_FILE
     next
 }
 
@@ -182,13 +157,13 @@
     next
 }
 
-# 948       <tr class="grey-border-bott steep-values">
-# 951             <p class="header-10">hot</p>
-# 957             <p>6 fl oz</p>
-# 964             <p>185-194 <sup>o</sup>F</p>
-# 971             <p>1.25 tsp /
-# 972             2.5 g</p>
-# 984       </tr>
+#  <tr class="grey-border-bott steep-values">
+#        <p class="header-10">hot</p>
+#        <p>6 fl oz</p>
+#        <p>185-194 <sup>o</sup>F</p>
+#        <p>1.25 tsp /
+#        2.5 g</p>
+#  </tr>
 /<tr class="grey-border-bott steep-values">/,/<\/tr>/ {
     if ($0 ~ /<p/)  {
         sub (/^[ \t]*/,"")
@@ -223,21 +198,22 @@
     }
 }
 
-# 990    <p><span id="no-steep-text">Recommended number of steeps - </span>\
-#           <span id="no-steep-val">one</span></p>
-/<p><span id="no-steep-text">/ {
+# <span id="no-steep-text">Recommended number of steeps - </span>
+# <span id="no-steep-val">1</span></p>
+/<span id="no-steep-text">/ {
+    getline
     split ($0,fld,"[<>]")
-    tea_steeps = fld[9]
-    print "tea_steeps = "tea_steeps >> TEA_INFO_FILE
+    tea_steeps = fld[3]
+    print "tea_steeps = " tea_steeps >> TEA_INFO_FILE
     next
 }
 
-# 993:      <h5 class="header-10">condiments</h5>
-# 998           <div class="condiment-cnt">
-# 999               <svg class="drink_plain">\
-#                       <use xlink:href="/media/icons/sprite_v2.svg#drink_plain">     </use></svg>
-# 1000              <p>Drink Plain</p>
-# 1001             </div>
+# <h5 class="header-10">condiments</h5>
+#     <div class="condiment-cnt">
+#         <svg class="drink_plain">\
+#             <use xlink:href="/media/icons/sprite_v2.svg#drink_plain">     </use></svg>
+#         <p>Drink Plain</p>
+#        </div>
 /<div class="condiment-cnt"/,/<\/div>/ {
     if ($0 ~ /<p>/) {
         split ($0,fld,"[<>]")
@@ -249,7 +225,7 @@
     }
 }
 
-# 1029      <span><span class="grey-txt">PICKING DATE</span><br>Mar 07, 2017</span>
+# <span><span class="grey-txt">PICKING DATE</span><br>Mar 07, 2017</span>
 /<span><span class="grey-txt">PICKING DATE/ {
     split ($0,fld,"[<>]")
     pickingDate = fld[9]
@@ -257,7 +233,7 @@
     next
 }
 
-# 1037      <span><span class="grey-txt">TIME OF DAY</span><br>Afternoon</span>
+# <span><span class="grey-txt">TIME OF DAY</span><br>Afternoon</span>
 /<span><span class="grey-txt">TIME OF DAY/ {
     split ($0,fld,"[<>]")
     timeOfDay = fld[9]
@@ -265,7 +241,7 @@
     next
 }
 
-# 1045      <span><span class="grey-txt">CAFFEINE</span><br>Medium</span>
+# <span><span class="grey-txt">CAFFEINE</span><br>Medium</span>
 /<span><span class="grey-txt">CAFFEINE/ {
     split ($0,fld,"[<>]")
     caffeine = fld[9]
@@ -273,7 +249,7 @@
     next
 }
 
-# 1053      <span><span class="grey-txt">BEST CONSUMED</span><br>Hot</span>
+# <span><span class="grey-txt">BEST CONSUMED</span><br>Hot</span>
 /<span><span class="grey-txt">BEST CONSUMED/ {
     split ($0,fld,"[<>]")
     bestConsumed = fld[9]
@@ -281,7 +257,7 @@
     next
 }
 
-# 1061      <span><span class="grey-txt">SEASON</span><br>First</span>
+# <span><span class="grey-txt">SEASON</span><br>First</span>
 /<span><span class="grey-txt">SEASON/ {
     split ($0,fld,"[<>]")
     season = fld[9]
@@ -289,7 +265,7 @@
     next
 }
 
-# 1069      <span><span class="grey-txt">SPECIALTY</span><br>Chinary</span>
+# <span><span class="grey-txt">SPECIALTY</span><br>Chinary</span>
 /<span><span class="grey-txt">SPECIALTY/ {
     split ($0,fld,"[<>]")
     specialty = fld[9]
@@ -297,7 +273,7 @@
     next
 }
 
-# 1076      <span><span class="grey-txt">SKU</span> FFMIB</span>
+# <span><span class="grey-txt">SKU</span> FFMIB</span>
 /<span><span class="grey-txt">SKU/ {
     split ($0,fld,"[<>]")
     SKU = fld[7]
@@ -306,7 +282,7 @@
     next
 }
 
-# 1080      | <span><span class="grey-txt">GRADE</span> FTGFOP1</span>
+# <span><span class="grey-txt">GRADE</span> FTGFOP1</span>
 /<span><span class="grey-txt">GRADE/ {
     split ($0,fld,"[<>]")
     grade = fld[7]
@@ -315,25 +291,18 @@
     next
 }
 
-# 1083      | <span><span class="grey-txt">INVOICE</span> DJ-06</span>
-/<span><span class="grey-txt">INVOICE/ {
-    split ($0,fld,"[<>]")
-    invoice = fld[7]
-    gsub (/ /,"",invoice)
-    print "Invoice = " invoice >> TEA_INFO_FILE
-    next
-}
-
-# 1110: <h3 class="header-1" style="line-height:30px;">Mission Hill Tea Estate,\
-#       <span id="estate-small-text">Darjeeling, India</span></h3>
-# 1111  <p><span style="font-family: arial,helvetica,sans-serif; font-size: small;">\
-#       Mission Hill got its name from the early Scottish ... 1919-1921.\
-#       </span></p><p><span style="font-family: arial,helvetica,sans-serif; font-size: small;">\
-#       Mission Hill is spread over sprawling 951 acres ... characters.</span></p>
+# <h3 class="header-1" style="line-height:30px;">Mission Hill Tea Estate,\
+# <span id="estate-small-text">Darjeeling, India</span></h3>
+# <p><span style="font-family: arial,helvetica,sans-serif; font-size: small;">\
+# Mission Hill got its name from the early Scottish ... 1919-1921.\
+# </span></p><p><span style="font-family: arial,helvetica,sans-serif; font-size: small;">\
+# Mission Hill is spread over sprawling 951 acres ... characters.</span></p>
 /<h3 class="header-1"/ {
     split ($0,fld,"[<>]")
     tea_estate = fld[3] fld[5]
     print "tea_estate = " tea_estate >> TEA_INFO_FILE
+    getline
+    getline
     getline
     sub (/\r/,"")
     sub (/^[ \t]*/,"")
@@ -386,7 +355,6 @@ END {
     printf ("\t%s", bestConsumed) >> TEA_FILE
     printf ("\t%s", pickingDate) >> TEA_FILE
     printf ("\t%s", SKU) >> TEA_FILE
-    printf ("\t%s", invoice) >> TEA_FILE
     #
     printf ("\n") >> TEA_FILE
     print "==========" >> TEA_INFO_FILE

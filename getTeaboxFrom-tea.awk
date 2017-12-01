@@ -17,20 +17,12 @@
 # SKU FFJPCLB | Grade SFTGFOP1 | Invoice EXN-08
 # Estate description
 
-# <span class="weight-span hidden">3.5 oz </span>
-# <span class="child-border-left no-cups-span hidden">40 cups</span>
-# <span class="price-span hidden">$ 12.99</span>
-
-# <p>SAMPLE-0.35 oz</p>
-# <p class="no-cups-sm">4 cups </p>
-# <span class="price-span hidden">$ 3</span>
-# /<span class="price-span hidden"/
-
 # 184   <meta property="og:url"   content="\
 #           https://www.teabox.com/tea/mission-hill-spring-darjeeling-black-tea" />
-/<meta property="og:url"   content="/{
+/<meta property="og:url" content="/{
     split ($0,fld,"\"")
     tea_URL = fld[4]
+    print "tea_URL = " tea_URL >> TEA_INFO_FILE
     next
 }
 
@@ -39,13 +31,15 @@
     split ($0,fld,"\"")
     tea_title = fld[4]
     gsub (/&#39;/,"’",tea_title)
+    print "tea_title = " tea_title >> TEA_INFO_FILE
     next
 }
 
-# 192 <meta property="product:weight:value"   content="100.0000" />
-/<meta property="product:weight:value"   content="/ {
-    split ($0,fld,"\"")
+# 192 <p id="ext-child-weight">3.5 oz</p>
+    /<p id="ext-child-weight">3.5 oz/ {
+    split ($0,fld,"[<>]")
     tea_grams = fld[4]
+    print "tea_grams = " tea_grams >> TEA_INFO_FILE
     next
 }
 
@@ -53,6 +47,7 @@
 /<meta property="og:price:amount" content="/ {
     split ($0,fld,"\"")
     tea_price = fld[4]
+    print "tea_price = " tea_price >> TEA_INFO_FILE
     next
 }
 
@@ -72,6 +67,8 @@
             (substr(tag,RSTART+2))
         tagsFound += 1
         tagsFound == 1 ? tea_tags = tag : tea_tags = tea_tags ", " tag
+        print "tag = "  tag >> TEA_INFO_FILE
+        print "tea_tags = "  tea_tags >> TEA_INFO_FILE
         next
     }
 }
@@ -81,27 +78,29 @@
     split ($0,fld,"[<>]")
     tea_oz = fld[3]
     sub (/ oz /,"",tea_oz) 
+    print "tea_oz = " tea_oz >> TEA_INFO_FILE
 }
 
-# 619   <span class="child-border-left no-cups-span hidden">40 cups</span
-/<span class="child-border-left no-cups-span hidden">/ {
-    split ($0,fld,"[<>]")
-    tea_cups = fld[3]
-    print "Cups = " tea_cups >> TEA_INFO_FILE
-    sub (/ cups/,"",tea_cups) 
-    if (tea_cups !~ /None/) {
-        tea_per_cup = tea_price/tea_cups
-    } else {
-        tea_per_cup = 0
-    }
+# <li class="sec-child-pdt " id="sec-child-pdt526132838418" data-price="67.49" \
+# data-sp-price="8999" data-percentage="25" ... data-variant-weight="99">
+/<li class="sec-child-pdt .* data-variant-weight="99">/ {
+    split ($0,fld,"\"")
+    tea_currentPrice = fld[6]
+    print "tea_currentPrice = " tea_currentPrice >> TEA_INFO_FILE
+    tea_cups = fld[12]
+    print "tea_cups = " tea_cups >> TEA_INFO_FILE
+    tea_per_cup = tea_currentPrice / 40
+    print "tea_per_cup = " tea_per_cup >> TEA_INFO_FILE
+    tea_grams = fld[4]
+    print "tea_grams = " tea_grams >> TEA_INFO_FILE
 }
 
 # 767   <h2 class="header-8">description</h2>
 # 768   <p class="message">This is not your typical ... other teas of this season.</p>
 # Description
-/<p class="message">/ {
-    split ($0,fld,"[<>]")
-    tea_description = fld[3]
+/<meta property="og:description" content="/ {
+    split ($0,fld,"\"")
+    tea_description = fld[4]
     gsub (/&#39;/,"’",tea_description)
     gsub (/&lsquo;/,"’",tea_description)
     gsub (/&rsquo;/,"’",tea_description)
@@ -126,16 +125,19 @@
 
 /<h3 class="header-4">liquor<\/h3>/ {
     level = "liquor"
+    print "level = " liquor >> TEA_INFO_FILE
     next
 }
 
 /<h3 class="header-4">dry leaf<\/h3>/ {
     level = "dry-leaf"
+    print "level = " dry-leaf >> TEA_INFO_FILE
     next
 }
 
 /<h3 class="header-4">infusion<\/h3>/ {
     level = "infusion"
+    print "level = " infusion >> TEA_INFO_FILE
     next
 }
 
@@ -145,6 +147,7 @@
     gsub (/&amp;/,"\\&")
     split ($0,fld,"[<>]")
     tea_aroma[level] = fld[3]
+    print "tea_aroma = " fld[3] >> TEA_INFO_FILE
     next
 }
 
@@ -154,6 +157,7 @@
     gsub (/&amp;/,"\\&")
     split ($0,fld,"[<>]")
     tea_appearance[level] = fld[3]
+    print "tea_appearance = " fld[3] >> TEA_INFO_FILE
     next
 }
 
@@ -164,6 +168,7 @@
     gsub (/&amp;/,"\\&")
     split ($0,fld,"[<>]")
     tea_taste[level] = fld[3]
+    print "tea_taste = " fld[3] >> TEA_INFO_FILE
     next
 }
 
@@ -173,6 +178,7 @@
     gsub (/&amp;/,"\\&")
     split ($0,fld,"[<>]")
     tea_complements = fld[3]
+    print "tea_complements = " fld[3] >> TEA_INFO_FILE
     next
 }
 
@@ -188,28 +194,31 @@
         sub (/^[ \t]*/,"")
         split ($0,fld,"[<>]")
         note = fld[3]
+        sub (/F /,"",note)
         sub (/ $/,"",note)
         sub (/ \/$/,"",note)
-        print "Note = " note >> TEA_INFO_FILE
         if (note ~ /hot/) 
             next
         if (note ~ / fl oz/) 
             next
         if (note ~ /85-90/) 
-            note = "185-194"
+            note = "185-194F"
         if (note ~ /80-85/ || note ~ /85-80/) 
-            note = "176-185"
+            note = "176-185F"
         notesFound += 1
         notesFound == 1 ? tea_notes = note : tea_notes = tea_notes " | " note
+        print "note = " note >> TEA_INFO_FILE
+        print "tea_notes = " tea_notes >> TEA_INFO_FILE
         next
     }
     if ($0 ~ /<\/p>/)  {
         sub (/^[ \t]*/,"")
         split ($0,fld,"[<>]")
         note = fld[1]
-        print "Note = " note >> TEA_INFO_FILE
         notesFound += 1
         notesFound == 1 ? tea_notes = note : tea_notes = tea_notes " | " note
+        print "note = " note >> TEA_INFO_FILE
+        print "tea_notes = " tea_notes >> TEA_INFO_FILE
         next
     }
 }
@@ -219,6 +228,7 @@
 /<p><span id="no-steep-text">/ {
     split ($0,fld,"[<>]")
     tea_steeps = fld[9]
+    print "tea_steeps = "tea_steeps >> TEA_INFO_FILE
     next
 }
 
@@ -323,7 +333,7 @@
 /<h3 class="header-1"/ {
     split ($0,fld,"[<>]")
     tea_estate = fld[3] fld[5]
-    print "Estate = " tea_estate >> TEA_INFO_FILE
+    print "tea_estate = " tea_estate >> TEA_INFO_FILE
     getline
     sub (/\r/,"")
     sub (/^[ \t]*/,"")
@@ -340,15 +350,15 @@
     gsub (/&ldquo;/,"“",tea_estate)
     gsub (/&rdquo;/,"”",tea_estate)
     gsub (/&amp;/,"\\&",tea_estate)
-    print "Estate description = " $0 >> TEA_DESCRIPTION_FILE
-    print "tea_estate = " tea_estate  >> TEA_INFO_FILE
+    print "Estate description = " tea_estate >> TEA_INFO_FILE
+    print "Estate description = " tea_estate >> TEA_DESCRIPTION_FILE
 }
 
 END {
     # Primary
     printf ("=HYPERLINK(\"%s\";\"%s\")", tea_URL, tea_title) >> TEA_FILE
     printf ("\t%d", tea_grams) >> TEA_FILE
-    printf ("\t$ %.2f", tea_price) >> TEA_FILE
+    printf ("\t$ %.2f", tea_currentPrice) >> TEA_FILE
     printf ("\t$ %.2f", tea_per_cup) >> TEA_FILE
     printf ("\t%s", tea_notes) >> TEA_FILE
     printf ("\t%s", caffeine) >> TEA_FILE
@@ -381,7 +391,7 @@ END {
     printf ("\n") >> TEA_FILE
     print "==========" >> TEA_INFO_FILE
 
-    printf ("%s | $%.2f | %s | %s | %s | %s | %s\n", tea_title, tea_per_cup, caffeine,
+    printf ("%s | $%.2f | %s | %s | %s | %s | %s\n\n", tea_title, tea_per_cup, caffeine,
         tea_appearance["liquor"], tea_aroma["liquor"], tea_taste["liquor"],
         tea_description) >> NOTE_FILE
 }

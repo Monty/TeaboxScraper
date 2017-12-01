@@ -50,7 +50,7 @@ fi
 DATE="$(date +%y%m%d)"
 LONGDATE="$(date +%y%m%d.%H%M%S)"
 
-COLUMNS="Teabox-columns"
+COLUMNS="Teabox-columns/$DATE"
 BASELINE="Teabox-baseline"
 mkdir -p $COLUMNS $BASELINE
 

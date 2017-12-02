@@ -111,8 +111,9 @@
 
 /<h3 class="header-4">/ {
     split ($0,fld,"[<>]")
-    level = fld[3]
-    print "level = " level >> TEA_INFO_FILE
+    type = fld[3]
+    gsub (/ /,"-",type)
+    print "type = " type >> TEA_INFO_FILE
     next
 }
 
@@ -121,8 +122,8 @@
     gsub (/&#39;/,"’")
     gsub (/&amp;/,"\\&")
     split ($0,fld,"[<>]")
-    tea_aroma[level] = fld[3]
-    print "tea_aroma = " fld[3] >> TEA_INFO_FILE
+    tea_aroma[type] = fld[3]
+    print type "_tea_aroma = " fld[3] >> TEA_INFO_FILE
     next
 }
 
@@ -131,8 +132,8 @@
     gsub (/&#39;/,"’")
     gsub (/&amp;/,"\\&")
     split ($0,fld,"[<>]")
-    tea_appearance[level] = fld[3]
-    print "tea_appearance = " fld[3] >> TEA_INFO_FILE
+    tea_appearance[type] = fld[3]
+    print type "_tea_appearance = " fld[3] >> TEA_INFO_FILE
     next
 }
 
@@ -142,8 +143,8 @@
     gsub (/&#39;/,"’")
     gsub (/&amp;/,"\\&")
     split ($0,fld,"[<>]")
-    tea_taste[level] = fld[3]
-    print "tea_taste = " fld[3] >> TEA_INFO_FILE
+    tea_taste[type] = fld[3]
+    print type "_tea_taste = " fld[3] >> TEA_INFO_FILE
     next
 }
 

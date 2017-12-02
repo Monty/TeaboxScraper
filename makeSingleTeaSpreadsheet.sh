@@ -1,15 +1,14 @@
 #! /bin/bash
-# Create a .csv spreadsheet of teas available on Teabox
+# Create a .csv spreadsheet of a single tea available on Teabox
+# Process a single tea file downloaded from teabox -- e.g.
+#   curl -O https://www.teabox.com/tea/goomtee-summer-darjeeling-black-tea1
+#   ./makeSingleTeaSpreadsheet.sh goomtee-summer-darjeeling-black-tea1
 
 # Use "-d" switch to output a "diffs" file useful for debugging
-# Use :-u" switch to leave spreadsheet unsorted, i.e. in the order found on the web
 while getopts ":dtu" opt; do
     case $opt in
     d)
         DEBUG="yes"
-        ;;
-    u)
-        UNSORTED="yes"
         ;;
     \?)
         echo "Ignoring invalid option: -$OPTARG" >&2
@@ -30,34 +29,35 @@ COLUMNS="Teabox-columns/$DATE"
 BASELINE="Teabox-baseline"
 mkdir -p $COLUMNS $BASELINE
 
-# File names are used in saveTodaysTeaboxFiles.sh
-# so if you change them here, change them there as well
-# they are named with today's date so running them twice
+# Files are named with today's date so running scripts twice
 # in one day will only generate one set of results
 #
 TEA_FILE="$COLUMNS/teas-$PACK_ID-$DATE.csv"
 PUBLISHED_TEAS="$BASELINE/teas-$PACK_ID.txt"
-TEA_INFO_FILE="$COLUMNS/teaInfo-$PACK_ID-$DATE.csv"
+TEA_INFO_FILE="$COLUMNS/teaInfo-$PACK_ID-$DATE.txt"
 PUBLISHED_TEA_INFO="$BASELINE/teaInfo-$PACK_ID.txt"
-TEA_DESCRIPTION_FILE="$COLUMNS/teaDescriptions-$PACK_ID-$DATE.csv"
+TEA_DESCRIPTION_FILE="$COLUMNS/teaDescriptions-$PACK_ID-$DATE.txt"
 PUBLISHED_TEA_DESCRIPTION="$BASELINE/teaDescriptions-$PACK_ID.txt"
-TEA_PASTED_FILE="$COLUMNS/teaPasted-$PACK_ID-$DATE.csv"
-PUBLISHED_TEA_PASTED="$BASELINE/teaPasted-$PACK_ID.txt"
 TEA_SPREADSHEET_FILE="Teabox_Teas-$PACK_ID-$DATE.csv"
 TEA_PUBLISHED_SPREADSHEET="$BASELINE/spreadsheet_teas-$PACK_ID.txt"
 #
+TEA_NOTE_FILE="Tea_Note-$PACK_ID-$DATE.txt"
 NOTE_FILE="$COLUMNS/notes-$PACK_ID-$DATE.txt"
 PUBLISHED_NOTES="$BASELINE/notes-$PACK_ID.txt"
 #
 # Name diffs with both date and time so every run produces a new result
 POSSIBLE_DIFFS="Teabox_diffs-$PACK_ID-$LONGDATE.txt"
 
-rm -f $TEA_FILE $TEA_INFO_FILE $TEA_DESCRIPTION_FILE $TEA_PASTED_FILE $TEA_SPREADSHEET_FILE
+rm -f $TEA_FILE $TEA_INFO_FILE $TEA_DESCRIPTION_FILE $TEA_NOTE_FILE $NOTE_FILE $TEA_SPREADSHEET_FILE
 
-# Create a list of tea URLs for later processing, and data for the pack spreadsheet
+# Create data for tea note and spreadsheet
 awk -v TEA_FILE=$TEA_FILE -v TEA_DESCRIPTION_FILE=$TEA_DESCRIPTION_FILE \
     -v TEA_INFO_FILE=$TEA_INFO_FILE -v SERIES_NUMBER=$lastRow \
     -v NOTE_FILE=$NOTE_FILE -f getTeaboxFrom-tea.awk $TEABOX_TARGET
+
+# Output note file
+printf "Tea | Per Cup | Caffeine | Appearance | Aroma | Taste | Description\n\n" >$TEA_NOTE_FILE
+cat $NOTE_FILE >>$TEA_NOTE_FILE
 
 # Build tea header
 # Primary
@@ -134,9 +134,7 @@ $(checkdiffs $PUBLISHED_TEA_INFO $TEA_INFO_FILE)
 $(checkdiffs $PUBLISHED_TEA_DESCRIPTION $TEA_DESCRIPTION_FILE)
 
 
-### Any funny stuff with file lengths? Any differences in
-### number of lines indicates the website was updated in the
-### middle of processing. You should rerun the script!
+### Any funny stuff with file length?
 
 $(wc $COLUMNS/*-$PACK_ID-$DATE.csv)
 

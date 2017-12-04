@@ -66,8 +66,8 @@
 }
 
 # <li class="sec-child-pdt " id="sec-child-pdt526132838418" data-price="67.49" \
-#     data-sp-price="8999" data-percentage="25" ... data-variant-weight="99">
-/<li class="sec-child-pdt .* data-variant-weight="99">/ {
+#     data-sp-price="8999" data-percentage="25" ... data-variant-weight="3.5">
+/<li class="sec-child-pdt .* data-variant-weight="3.5">/ {
     split ($0,fld,"\"")
     tea_currentPrice = fld[6]
     print "tea_currentPrice = " tea_currentPrice >> TEA_INFO_FILE

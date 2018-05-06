@@ -66,9 +66,11 @@
 }
 
 # <li class="sec-child-pdt " id="sec-child-pdt526132838418" data-price="67.49" \
-#     data-sp-price="8999" data-percentage="25" ... data-variant-weight="0.4">
+#     data-sp-price="8999" data-percentage="25" ... data-variant-weight="3.5">
 /<li class="sec-child-pdt .* data-variant-weight="/ {
     split ($0,fld,"\"")
+    if (fld[26] == 0.4)
+        next
     tea_currentPrice = fld[6]
     print "tea_currentPrice = " tea_currentPrice >> TEA_INFO_FILE
     tea_cups = fld[12]
@@ -93,6 +95,7 @@
     gsub (/&ldquo;/,"“",tea_description)
     gsub (/&rdquo;/,"”",tea_description)
     gsub (/&amp;/,"\\&",tea_description)
+    gsub (/\r/,"",tea_description)
     print tea_description >> TEA_DESCRIPTION_FILE
     next
 }
@@ -119,6 +122,7 @@
 
 /<h5 class="header-10">aroma<\/h5>/ {
     getline
+    sub (/\r/,"")
     gsub (/&#39;/,"’")
     gsub (/&amp;/,"\\&")
     split ($0,fld,"[<>]")
@@ -129,6 +133,7 @@
 
 /<h5 class="header-10">appearance<\/h5>/ {
     getline
+    sub (/\r/,"")
     gsub (/&#39;/,"’")
     gsub (/&amp;/,"\\&")
     split ($0,fld,"[<>]")
@@ -150,6 +155,7 @@
 
 /<h5 class="header-10">COMPLEMENTS<\/h5>/ {
     getline
+    sub (/\r/,"")
     gsub (/&#39;/,"’")
     gsub (/&amp;/,"\\&")
     split ($0,fld,"[<>]")

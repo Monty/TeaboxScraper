@@ -66,18 +66,18 @@
 }
 
 # <li class="sec-child-pdt " id="sec-child-pdt526132838418" data-price="67.49" \
-#     data-sp-price="8999" data-percentage="25" ... data-variant-weight="99">
-/<li class="sec-child-pdt .* data-variant-weight="99">/ {
+#     data-sp-price="8999" data-percentage="25" ... data-variant-weight="0.4">
+/<li class="sec-child-pdt .* data-variant-weight="/ {
     split ($0,fld,"\"")
     tea_currentPrice = fld[6]
     print "tea_currentPrice = " tea_currentPrice >> TEA_INFO_FILE
-    tea_cups = 40
+    tea_cups = fld[12]
     print "tea_cups = " tea_cups >> TEA_INFO_FILE
     tea_per_cup = tea_currentPrice / tea_cups
     print "tea_per_cup = " tea_per_cup >> TEA_INFO_FILE
-    tea_grams = 99
+    tea_grams = tea_cups * 2.5
     print "tea_grams = " tea_grams >> TEA_INFO_FILE
-    tea_oz = 3.5
+    tea_oz = fld[26]
     print "tea_oz = " tea_oz >> TEA_INFO_FILE
 }
 
@@ -292,6 +292,15 @@
     next
 }
 
+# <span><span class="grey-txt">INVOICE</span> DJ-17</span>
+/<span><span class="grey-txt">INVOICE/ {
+    split ($0,fld,"[<>]")
+    invoice = fld[7]
+    gsub (/ /,"",invoice)
+    print "Invoice = " invoice >> TEA_INFO_FILE
+    next
+}
+
 # <h3 class="header-1" style="line-height:30px;">Mission Hill Tea Estate,\
 # <span id="estate-small-text">Darjeeling, India</span></h3>
 # <p><span style="font-family: arial,helvetica,sans-serif; font-size: small;">\
@@ -356,6 +365,7 @@ END {
     printf ("\t%s", bestConsumed) >> TEA_FILE
     printf ("\t%s", pickingDate) >> TEA_FILE
     printf ("\t%s", SKU) >> TEA_FILE
+    printf ("\t%s", invoice) >> TEA_FILE
     #
     printf ("\n") >> TEA_FILE
     print "==========" >> TEA_INFO_FILE

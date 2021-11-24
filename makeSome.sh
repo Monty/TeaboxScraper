@@ -1,0 +1,10 @@
+./makeSingleTeaSpreadsheet.sh Teabox-teas/castleton-china-spring-darjeeling-black-tea
+./makeSingleTeaSpreadsheet.sh Teabox-teas/castleton-moonlight-summer-darjeeling-white-tea
+./makeSingleTeaSpreadsheet.sh Teabox-teas/classic-clonal-spring-darjeeling-black-tea
+./makeSingleTeaSpreadsheet.sh Teabox-teas/giddapahar-special-darjeeling-muscatel-black
+./makeSingleTeaSpreadsheet.sh Teabox-teas/glendale-winter-frost-twirl-black
+./makeSingleTeaSpreadsheet.sh Teabox-teas/oaks-china-organic-summer-black-tea
+./makeSingleTeaSpreadsheet.sh Teabox-teas/seeyok-muscatel-summer-darjeeling-black-tea
+./makeSingleTeaSpreadsheet.sh Teabox-teas/singbuli-organic-flowery-spring-darjeeling-oolong-tea
+./makeSingleTeaSpreadsheet.sh Teabox-teas/teabox-roasted-darjeeling-black
+./makeSingleTeaSpreadsheet.sh Teabox-teas/wonder-spring-darjeeling-white-tea

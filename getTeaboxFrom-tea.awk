@@ -5,7 +5,7 @@
 # Liquor: Aroma, Appearance, Taste, Complements
 # Dry Leaf: Aroma, Appearance
 # Infusion: Aroma, Appearance
-# Steeping Notes: Hot, 6 fl oz, 185-194 oF, 3.0 tsp / 2.5 g, 4 mins
+# Steeping Notes: Hot, 6 fl oz, 176oF -185oF, 3.0 tsp / 2.5 g, 4 mins
 # Recommended number of steeps - 1
 # Drink Plain
 # Picking Date 08-06-2017
@@ -17,16 +17,7 @@
 # SKU FFJPCLB | Grade SFTGFOP1
 # Estate description
 
-# <meta property="og:url"   content="\
-#     https://www.teabox.com/tea/mission-hill-spring-darjeeling-black-tea" />
-/<meta property="og:url" content="/{
-    split ($0,fld,"\"")
-    tea_URL = fld[4]
-    print "tea_URL = " tea_URL >> TEA_INFO_FILE
-    next
-}
-
-# <meta property="og:title" content="Mission Hill Classic Spring Black Tea" />
+# <meta property="og:title" content="Darjeeling Special Spring White">
 /<meta property="og:title" content="/ {
     split ($0,fld,"\"")
     tea_title = fld[4]
@@ -35,60 +26,12 @@
     next
 }
 
-# <meta property="og:price:amount" content="12.99" />
-/<meta property="og:price:amount" content="/ {
-    split ($0,fld,"\"")
-    tea_price = fld[4]
-    print "tea_price = " tea_price >> TEA_INFO_FILE
-    next
-}
-
-# <ul class="horz-list pdt-tag-list">
-#     <li><p>Darjeeling</p></li>
-#     <li><p>Single Estate</p></li>
-# </ul>
-/<ul class="horz-list pdt-tag-list">/,/<\/ul>/ {
-    if ($0 ~ /<li>/)  {
-        split ($0,fld,"[<>]")
-        tag = fld[5]
-        # lowercase everything but the first character
-        tag = substr(tag,1,1) tolower(substr(tag,2))
-        # uppercase the first character of any second word
-        if (match (tag,/ /) > 0)
-            tag = substr(tag,1,RSTART) toupper(substr(tag,RSTART+1,1)) \
-            (substr(tag,RSTART+2))
-        tagsFound += 1
-        tagsFound == 1 ? tea_tags = tag : tea_tags = tea_tags ", " tag
-        print "tag = "  tag >> TEA_INFO_FILE
-        print "tea_tags = "  tea_tags >> TEA_INFO_FILE
-        next
-    }
-}
-
-# <li class="sec-child-pdt " id="sec-child-pdt526132838418" data-price="67.49" \
-#     data-sp-price="8999" data-percentage="25" ... data-variant-weight="3.5">
-/<li class="sec-child-pdt .* data-variant-weight="/ {
-    split ($0,fld,"\"")
-    if (fld[26] == 0.4)
-        next
-    tea_currentPrice = fld[6]
-    print "tea_currentPrice = " tea_currentPrice >> TEA_INFO_FILE
-    tea_cups = fld[12]
-    print "tea_cups = " tea_cups >> TEA_INFO_FILE
-    tea_per_cup = tea_currentPrice / tea_cups
-    print "tea_per_cup = " tea_per_cup >> TEA_INFO_FILE
-    tea_grams = tea_cups * 2.5
-    print "tea_grams = " tea_grams >> TEA_INFO_FILE
-    tea_oz = fld[26]
-    print "tea_oz = " tea_oz >> TEA_INFO_FILE
-}
-
-# <h2 class="header-8">description</h2>
-# <p class="message">This is not your typical ... other teas of this season.</p>
-# Description
+# <meta property="og:description" content="
+# If you are looking to get acquainted ... ahead in your tea journey.">
 /<meta property="og:description" content="/ {
+    getline
     split ($0,fld,"\"")
-    tea_description = fld[4]
+    tea_description = fld[1]
     gsub (/&#39;/,"’",tea_description)
     gsub (/&lsquo;/,"’",tea_description)
     gsub (/&rsquo;/,"’",tea_description)
@@ -99,6 +42,63 @@
     print tea_description >> TEA_DESCRIPTION_FILE
     next
 }
+
+# <meta property="og:price:amount" content="62.96">
+/<meta property="og:price:amount" content="/ {
+    split ($0,fld,"\"")
+    tea_price = fld[4]
+    print "tea_price = " tea_price >> TEA_INFO_FILE
+    next
+}
+
+# <meta property="og:url" content="\
+#     https://www.teabox.com/products/wonder-spring-darjeeling-white-tea">
+/<meta property="og:url" content="/{
+    split ($0,fld,"\"")
+    tea_URL = fld[4]
+    print "tea_URL = " tea_URL >> TEA_INFO_FILE
+    next
+}
+
+# <ul class="horz-list pdt-tag-list">
+#     <li><p>Darjeeling</p></li>
+#     <li><p>Single Estate</p></li>
+# </ul>
+# /<ul class="horz-list pdt-tag-list">/,/<\/ul>/ {
+#     if ($0 ~ /<li>/)  {
+#         split ($0,fld,"[<>]")
+#         tag = fld[5]
+#         # lowercase everything but the first character
+#         tag = substr(tag,1,1) tolower(substr(tag,2))
+#         # uppercase the first character of any second word
+#         if (match (tag,/ /) > 0)
+#             tag = substr(tag,1,RSTART) toupper(substr(tag,RSTART+1,1)) \
+#             (substr(tag,RSTART+2))
+#         tagsFound += 1
+#         tagsFound == 1 ? tea_tags = tag : tea_tags = tea_tags ", " tag
+#         print "tag = "  tag >> TEA_INFO_FILE
+#         print "tea_tags = "  tea_tags >> TEA_INFO_FILE
+#         next
+#     }
+# }
+
+# <li class="sec-child-pdt " id="sec-child-pdt526132838418" data-price="67.49" \
+#     data-sp-price="8999" data-percentage="25" ... data-variant-weight="3.5">
+# /<li class="sec-child-pdt .* data-variant-weight="/ {
+#     split ($0,fld,"\"")
+#     if (fld[26] == 0.4)
+#         next
+#     tea_currentPrice = fld[6]
+#     print "tea_currentPrice = " tea_currentPrice >> TEA_INFO_FILE
+#     tea_cups = fld[12]
+#     print "tea_cups = " tea_cups >> TEA_INFO_FILE
+#     tea_per_cup = tea_currentPrice / tea_cups
+#     print "tea_per_cup = " tea_per_cup >> TEA_INFO_FILE
+#     tea_grams = tea_cups * 2.5
+#     print "tea_grams = " tea_grams >> TEA_INFO_FILE
+#     tea_oz = fld[26]
+#     print "tea_oz = " tea_oz >> TEA_INFO_FILE
+# }
 
 #  <h3 class="header-4">liquor</h3>
 #      <h5 class="header-10">aroma</h5>
@@ -112,7 +112,7 @@
 #      <h5 class="header-10">aroma</h5>
 #      <h5 class="header-10">appearance</h5>
 
-/<h3 class="header-4">/ {
+/<h3 class="exp-main-title header-4">/ {
     split ($0,fld,"[<>]")
     type = fld[3]
     gsub (/ /,"-",type)
@@ -120,18 +120,22 @@
     next
 }
 
-/<h5 class="header-10">aroma<\/h5>/ {
+/<h5 class="exp-content-title header-10">aroma<\/h5>/ {
     getline
     sub (/\r/,"")
     gsub (/&#39;/,"’")
     gsub (/&amp;/,"\\&")
     split ($0,fld,"[<>]")
+    if (type == "") {
+        type = "liquor"
+        print "type = " type >> TEA_INFO_FILE
+    }
     tea_aroma[type] = fld[3]
     print type "_tea_aroma = " fld[3] >> TEA_INFO_FILE
     next
 }
 
-/<h5 class="header-10">appearance<\/h5>/ {
+/<h5 class="exp-content-title header-10">appearance<\/h5>/ {
     getline
     sub (/\r/,"")
     gsub (/&#39;/,"’")
@@ -142,7 +146,7 @@
     next
 }
 
-/<h5 class="header-10">taste<\/h5>/ {
+/<h5 class="exp-content-title header-10">taste<\/h5>/ {
     getline
     sub (/\r/,"")
     gsub (/&#39;/,"’")
@@ -153,7 +157,7 @@
     next
 }
 
-/<h5 class="header-10">COMPLEMENTS<\/h5>/ {
+/<h5 class="exp-content-title header-10">COMPLEMENTS<\/h5>/ {
     getline
     sub (/\r/,"")
     gsub (/&#39;/,"’")
@@ -164,45 +168,26 @@
     next
 }
 
-#  <tr class="grey-border-bott steep-values">
-#        <p class="header-10">hot</p>
-#        <p>6 fl oz</p>
-#        <p>185-194 <sup>o</sup>F</p>
-#        <p>1.25 tsp /
-#        2.5 g</p>
-#  </tr>
-/<tr class="grey-border-bott steep-values">/,/<\/tr>/ {
-    if ($0 ~ /<p/)  {
-        sub (/^[ \t]*/,"")
-        split ($0,fld,"[<>]")
-        note = fld[3]
-        sub (/F /,"",note)
-        sub (/ $/,"",note)
-        sub (/ \/$/,"",note)
-        if (note ~ /hot/) 
-            next
-        if (note ~ / fl oz/) 
-            next
-        if (note ~ /85-90/) 
-            note = "185-194F"
-        if (note ~ /80-85/ || note ~ /85-80/) 
-            note = "176-185F"
-        notesFound += 1
-        notesFound == 1 ? tea_notes = note : tea_notes = tea_notes " | " note
-        print "note = " note >> TEA_INFO_FILE
-        print "tea_notes = " tea_notes >> TEA_INFO_FILE
-        next
+/<h5 class="steeping-note-hot">/ {
+    sub (/^[ \t]*/,"")
+    split ($0,fld,"[<>]")
+    note = fld[3]
+    if (note ~ / fl oz /)
+        sub (/ *\/ .*/,"",note)
+    if (note ~ / tsp /) {
+        getline
+        sub (/.* \/ /,"")
+        sub (/ g .*/,"g")
+        note = $0
     }
-    if ($0 ~ /<\/p>/)  {
-        sub (/^[ \t]*/,"")
-        split ($0,fld,"[<>]")
-        note = fld[1]
-        notesFound += 1
-        notesFound == 1 ? tea_notes = note : tea_notes = tea_notes " | " note
-        print "note = " note >> TEA_INFO_FILE
-        print "tea_notes = " tea_notes >> TEA_INFO_FILE
-        next
-    }
+    if (note ~ /185/)
+        note = "185-194F"
+    if (note ~ /176/)
+        note = "176-185F"
+    notesFound += 1
+    notesFound == 1 ? tea_notes = note : tea_notes = tea_notes " | " note
+    print "note = " note >> TEA_INFO_FILE
+    print "tea_notes = " tea_notes >> TEA_INFO_FILE
 }
 
 # <span id="no-steep-text">Recommended number of steeps - </span>

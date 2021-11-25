@@ -17,7 +17,7 @@
 # SKU FFJPCLB | Grade SFTGFOP1
 # Estate description
 
-# <meta property="og:title" content="Darjeeling Special Spring White">
+# 124: <meta property="og:title" content="Darjeeling Special Spring White">
 /<meta property="og:title" content="/ {
     split ($0,fld,"\"")
     tea_title = fld[4]
@@ -26,7 +26,7 @@
     next
 }
 
-# <meta property="og:description" content="
+# 144: <meta property="og:description" content="
 # If you are looking to get acquainted ... ahead in your tea journey.">
 /<meta property="og:description" content="/ {
     getline
@@ -43,7 +43,7 @@
     next
 }
 
-# <meta property="og:price:amount" content="62.96">
+# 146: <meta property="og:price:amount" content="62.96">
 /<meta property="og:price:amount" content="/ {
     split ($0,fld,"\"")
     tea_price = fld[4]
@@ -51,7 +51,7 @@
     next
 }
 
-# <meta property="og:url" content="\
+# 149: <meta property="og:url" content="\
 #     https://www.teabox.com/products/wonder-spring-darjeeling-white-tea">
 /<meta property="og:url" content="/{
     split ($0,fld,"\"")
@@ -100,17 +100,25 @@
 #     print "tea_oz = " tea_oz >> TEA_INFO_FILE
 # }
 
-#  <h3 class="header-4">liquor</h3>
-#      <h5 class="header-10">aroma</h5>
-#      <h5 class="header-10">appearance</h5>
-#      <h5 class="header-10">taste</h5>
-#      <h5 class="header-10">COMPLEMENTS</h5>
-#  <h3 class="header-4">dry leaf</h3>
-#      <h5 class="header-10">aroma</h5>
-#      <h5 class="header-10">appearance</h5>
-#  <h3 class="header-4">infusion</h3>
-#      <h5 class="header-10">aroma</h5>
-#      <h5 class="header-10">appearance</h5>
+
+#  <p class="liquor-text">(liquor)</p>
+#      <h5 class="exp-content-title header-10">aroma</h5>
+#      <h5 class="exp-content-title header-10">appearance</h5>
+#      <h5 class="exp-content-title header-10">taste</h5>
+#      <h5 class="exp-content-title header-10">COMPLEMENTS</h5>
+#  <h3 class="exp-main-title header-4">dry leaf</h3>
+#      <h5 class="exp-content-title header-10">aroma</h5>
+#      <h5 class="exp-content-title header-10">appearance</h5>
+#  <h3 class="exp-main-title header-4">infusion</h3>
+#      <h5 class="exp-content-title header-10">aroma</h5>
+#      <h5 class="exp-content-title header-10">appearance</h5>
+#
+#      <h5 class="steeping-note-hot">6 fl oz / 180 ml</h5>
+#      <h5 class="steeping-note-hot">185<sup>o</sup>F -194<sup>o</sup>F \
+#          / 85<sup>o</sup>C -90<sup>o</sup>C</h5>
+#      <h5 class="steeping-note-hot">3 tsp  /
+#        0.09 oz / 2.5 g </h5>
+#      <h5 class="steeping-note-hot">5 mins</h5>
 
 /<h3 class="exp-main-title header-4">/ {
     split ($0,fld,"[<>]")
@@ -190,8 +198,8 @@
     print "tea_notes = " tea_notes >> TEA_INFO_FILE
 }
 
-# <span id="no-steep-text">Recommended number of steeps - </span>
-# <span id="no-steep-val">1</span></p>
+# <span id="no-steep-text">Recommended Steeps </span>
+# <span id="no-steep-val">1</span>
 /<span id="no-steep-text">/ {
     getline
     split ($0,fld,"[<>]")
@@ -233,10 +241,14 @@
     next
 }
 
-# <span><span class="grey-txt">CAFFEINE</span><br>Medium</span>
-/<span><span class="grey-txt">CAFFEINE/ {
+# <span class="specs_info_content">The amount of caffeine this tea contains</span>
+# 
+# <span class="sub-text">Low</span>
+/>The amount of caffeine this tea contains</ {
+    getline
+    getline
     split ($0,fld,"[<>]")
-    caffeine = fld[9]
+    caffeine = fld[3]
     print "Caffeine = " caffeine >> TEA_INFO_FILE
     next
 }
